@@ -1,0 +1,44 @@
+
+
+import pandas as pd
+from textblob import TextBlob
+# ! python -m textblob.download_corpora
+from datetime import datetime
+
+# custom_date_parser = lambda x: datetime.strptime(x, "%Y-%d-%m %H:%M:%S")
+df = pd.read_csv('facebook profile format (1).csv')
+# df.info()
+# df.head()
+
+
+# VB  = verb, base form take
+# VBD = verb, past tense took
+# VBG = verb, gerund/present participle taking
+# VBN = verb, past participle taken
+# VBP = verb, sing. present, non-3d take
+# VBZ = verb, 3rd person sing. present takes
+[TextBlob(str(i)).tags for i in df['text'].tolist()]
+verb_list= ['cancers','Fishing', 'journey', 'making', 'loving', 'listening', 'walking', 'running', 'enjoying', 'swimming', 'skiing', 'surfing', 'drinking', 'study', 'gaming', 'photography', 'vaccinating', 'talk', 'speaking', 'meeting']
+# verb_list =['specialization']
+df['hobby'] = ''
+df['hobby_action'] = ''
+df['since date'] = '25-8-2021'
+df['until date'] = '26-8-2021'
+list_of_tags = [TextBlob(str(i)).tags for i in df['text'].tolist()]
+# create a textblob object
+for i in range(len(list_of_tags)):
+  hobby_list = [j[0] for j in list_of_tags[i] if j[0] in verb_list]
+  df['hobby'].iloc[i] = hobby_list
+  try:
+    hobby_action_list = [df['text'].iloc[i].split()[j:] for j in range(len(list_of_tags[i])) if list_of_tags[i][j][0] in verb_list]
+  except:
+    pass
+  df['hobby_action'].iloc[i] = hobby_action_list
+for i in range(len(list_of_tags)):
+  try:
+    print([list_of_tags[i][j+1][0] for j in range(len(list_of_tags[i])) if list_of_tags[i][j][1] in verb_list])
+  except:
+    pass
+
+df.to_csv("Important.csv",index = False)
+
